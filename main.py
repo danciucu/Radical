@@ -12,7 +12,7 @@ class Radical(ttkthemes.ThemedTk):
 
         # configure the root window
         self.title('Radical')
-        self.geometry('450x350')
+        self.geometry('450x360')
         #self.iconphoto(False, tkinter.PhotoImage(file = "logo1.png"))
         self.set_theme('radiance')
 
