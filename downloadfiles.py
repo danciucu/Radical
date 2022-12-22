@@ -119,7 +119,7 @@ class previous_reports():
                         if pdf_count == 5:
                             scroll_driver = driver.execute_script("window.scrollTo(0,document.body.scrollHeight)")
 
-                #time.sleep(80)
+                # check if the file downloaded exists
                 while not os.path.exists('C:/Users/' + globalvars.user_path + '/Downloads/' + str(text_file_inspection_driver.text)):
                     time.sleep(0.5)
                 
@@ -130,21 +130,21 @@ class previous_reports():
                 pdf_page1 = pdf_file.getPage(0)
                 pdf_text = pdf_page1.extractText()
 
-                # check if the document is an inspection
-                if 'Inspection' in pdf_text:
+                # check if the document has more than one page - if it doesn't, delete it
+                if pdf_file.numPages == 1:
+                    os.remove(globalvars.folders[i] + "/" + str(text_file_inspection_driver.text))
+                    multimedia_return_driver = driver.find_element(By.XPATH, '//*[@id="multimediaManagerForm"]/div[1]/div[1]/nav/ol/li[1]')
+                    multimedia_return_driver.click()
+                
+                # if it has more than a page is an inspection
+                else:
                     download_count += 1
                     # go back to the folder menu
                     scroll_driver = driver.execute_script("window.scrollTo(0,-document.body.scrollHeight)")
                     multimedia_return_driver = driver.find_element(By.XPATH, '//*[@id="multimediaManagerForm"]/div[1]/div[1]/nav/ol/li[1]')
                     multimedia_return_driver.click()
                     if download_count == 2:
-                        break
-                
-                # delete it if is not an inspection
-                else:
-                    os.remove(globalvars.folders[i] + "/" + str(text_file_inspection_driver.text))
-                    multimedia_return_driver = driver.find_element(By.XPATH, '//*[@id="multimediaManagerForm"]/div[1]/div[1]/nav/ol/li[1]')
-                    multimedia_return_driver.click()
+                        break                    
                 
                 folder_count += 1
 
