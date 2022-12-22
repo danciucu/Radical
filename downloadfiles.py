@@ -21,7 +21,6 @@ class previous_reports():
         globalvars.init()
 
         # simuate a chrome browser
-        ##driver = selenium.webdriver.Chrome('C:\Program Files\Google\Chrome\Application\chromedriver.exe')
         driver = selenium.webdriver.Chrome(ChromeDriverManager().install())
         # access BrM website
         driver.get('https://brm.kytc.ky.gov/BrM6/Login.aspx?ReturnUrl=%2fBrM6')
@@ -44,8 +43,6 @@ class previous_reports():
         # download inspection reports
         if globalvars.cb4var == 1:
             self.download_prev_reports(driver)
-
-        #self.wait_display(driver, 20, "ctl00_m_cphContentPane_m_ucBridgeList_DTCBridgeGrid1_grid_ctl00_ctl02_ctl02_FilterTextBox_Bridge_ID")
 
 
     def wait_display(self, driver, time, id_var):
@@ -196,23 +193,6 @@ class previous_reports():
                         time.sleep(0.5)
                     
                     shutil.move('C:/Users/' + globalvars.user_path + '/Downloads/' + str(plans_name_driver.get_attribute('value')) + '.pdf', globalvars.folders[i])
-
-
-
-
-                
-                # wait until the file is downloaded
-                #while not os.path.exists('C:/Users/' + globalvars.user_path + '/Downloads/' + str(plans_name_driver.get_attribute('value')) + '.pdf'):
-                #    time.sleep(0.5)
-                #time.sleep(160)
-
-                # try to move the file if exists
-                #try:
-                #    shutil.move('C:/Users/' + globalvars.user_path + '/Downloads/' + str(plans_name_driver.get_attribute('value')) + '.pdf', globalvars.folders[i])
-
-                # if the file doesn't exist just move on    
-                #except:
-                #    continue
             
             # scroll up 
             scroll_driver = driver.execute_script("window.scrollTo(0,-document.body.scrollHeight)")
