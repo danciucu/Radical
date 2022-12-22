@@ -1,5 +1,6 @@
 import tkinter, ttkthemes, tkinter.filedialog
 import globalvars, folders, importdatabase, downloadfiles
+import os
 
 
 
@@ -101,8 +102,16 @@ class Radical(ttkthemes.ThemedTk):
         globalvars.user_path = folder_path[i:j]
         # fill entry bar with the path
         self.save_entry.insert(tkinter.END, folder_path)
-        # create folders and subfolders
-        folders.create(folder_path)
+        # check if the folder selected is empty
+        if not os.listdir(folder_path):
+            print("empty")
+            # create folders and subfolders
+            folders.create(folder_path)
+        else:
+            print("not empty")
+
+            
+        
 
     # define function that downalods files from NBIS website
     def download_files(self):
