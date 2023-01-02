@@ -9,5 +9,9 @@ class bridgeID():
         # import global variables
         globalvars.init()
 
-        bridge_database = pd.read_excel(arg)
-        globalvars.bridgeID = bridge_database['Bridge ID'].dropna()
+        try:
+            bridge_database = pd.read_excel(arg)
+            globalvars.bridgeID = bridge_database['Bridge ID'].dropna()
+            globalvars.error_message = ''
+        except:
+            globalvars.error_message = "Error: Bridge Database Was Not Imported!"

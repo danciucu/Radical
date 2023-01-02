@@ -30,7 +30,7 @@ class Radical(ttkthemes.ThemedTk):
         self.password_label = tkinter.ttk.Label(self.main_frame, text = 'Password')
         self.password_label.grid(row = 3, column = 1)
         ## entry for password
-        self.password_entry = tkinter.ttk.Entry(self.main_frame, width = 30, state = tkinter.NORMAL)
+        self.password_entry = tkinter.ttk.Entry(self.main_frame, width = 30, state = tkinter.NORMAL, show = '*')
         self.password_entry.grid(row = 4, column = 1)
         ## label for importing data
         self.import_label = tkinter.ttk.Label(self.main_frame, text = 'Import an Excel file with bridge ID')
@@ -48,7 +48,7 @@ class Radical(ttkthemes.ThemedTk):
         self.save_entry = tkinter.ttk.Entry(self.main_frame, width = 40, state = tkinter.NORMAL)
         self.save_entry.grid(row = 9, column = 1)
         ## button for save folder
-        self.save_button = tkinter.ttk.Button(self.main_frame, text = '...', state = tkinter.NORMAL, command = self.folder_path, width = 2)
+        self.save_button = tkinter.ttk.Button(self.main_frame, text = '...', state = tkinter.DISABLED, command = self.folder_path, width = 2)
         self.save_button.grid(row = 9, column = 2) 
         ## Photo Document checkbox
         self.var1 = tkinter.IntVar()
@@ -67,8 +67,11 @@ class Radical(ttkthemes.ThemedTk):
         self.cbox3 = tkinter.ttk.Checkbutton(self.main_frame, text = 'Previous Report', variable = self.var4, onvalue = 1, offvalue = 0)
         self.cbox3.grid(row = 13, column = 1)
         ## button for starting the process
-        self.save_button = tkinter.ttk.Button(self.main_frame, text = 'Start', command = self.download_files, state = tkinter.NORMAL, width = 4)
-        self.save_button.grid(row = 14, column = 1) 
+        self.start_button = tkinter.ttk.Button(self.main_frame, text = 'Start', command = self.download_files, state = tkinter.DISABLED, width = 4)
+        self.start_button.grid(row = 14, column = 1) 
+        ## error message
+        self.error_label = tkinter.ttk.Label(self.main_frame, text = '', foreground = "#f5f4f2")
+        self.error_label.grid(row = 15, column = 1)
 
 
     # define function that imports the Excel file:
@@ -82,6 +85,12 @@ class Radical(ttkthemes.ThemedTk):
         self.import_entry.insert(tkinter.END, path)
         # import bridge IDs
         importdatabase.bridgeID(path)
+        # display error if any
+        self.error_label.config(text = globalvars.error_message, foreground = '#000000')
+        print("arg = ", globalvars.error_message)
+        if globalvars.error_message == '':
+            self.save_button.config(state = tkinter.NORMAL)
+            self.start_button.config(state = tkinter.NORMAL)
 
     # define function that imports the Excel file:
     def folder_path(self):
@@ -102,16 +111,8 @@ class Radical(ttkthemes.ThemedTk):
         globalvars.user_path = folder_path[i:j]
         # fill entry bar with the path
         self.save_entry.insert(tkinter.END, folder_path)
-        # check if the folder selected is empty
-        if not os.listdir(folder_path):
-            print("empty")
-            # create folders and subfolders
-            folders.create(folder_path)
-        else:
-            print("not empty")
-
-            
-        
+        # create folders and subfolders
+        folders.create(folder_path)
 
     # define function that downalods files from NBIS website
     def download_files(self):
