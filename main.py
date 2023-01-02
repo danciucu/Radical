@@ -87,7 +87,6 @@ class Radical(ttkthemes.ThemedTk):
         importdatabase.bridgeID(path)
         # display error if any
         self.error_label.config(text = globalvars.error_message, foreground = '#000000')
-        print("arg = ", globalvars.error_message)
         if globalvars.error_message == '':
             self.save_button.config(state = tkinter.NORMAL)
             self.start_button.config(state = tkinter.NORMAL)
