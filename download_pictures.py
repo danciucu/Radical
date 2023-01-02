@@ -12,6 +12,7 @@ def main(driver):
     xpath_count = ''
     download_count = 0
     pdf_count = 0
+    name_count = 1
 
     for i in range(len(globalvars.bridgeID)):
         # reset count, download_count, pdf_count
@@ -57,7 +58,6 @@ def main(driver):
             time.sleep(5)
 
             # loop over all files to check if the file is a pdf document
-            ## NEED TO SCROLL DOWN TO FIND THE PDF FILE SINCE MIGHT BE AT THE BOTTOM OF THE PAGE
             while True:
                 text_file_inspection_driver = driver.find_element(By.XPATH, '//*[@id="multimediaManagerForm"]/div[2]/div/div[2]/div[1]/table/tbody/tr['+ str(pdf_count + 1) +']/td[1]')
                 # if it's a pdf file, then download the new file
@@ -75,16 +75,34 @@ def main(driver):
             while not os.path.exists('C:/Users/' + globalvars.user_path + '/Downloads/' + str(text_file_inspection_driver.text)):
                 time.sleep(0.5)
             
+            # name of the file without the file type (i.e. ".pdf")
+            pdf_name = str(text_file_inspection_driver.text)
+            pdf_name = pdf_name[:len(pdf_name) - 4]
+
+            # check if the file already exists
+            while True:
+                # set up conditions
+                path0 = globalvars.folders[i]+ '/' + pdf_name + ' (' + str(name_count) + ').pdf'
+                path1 = 'C:/Users/' + globalvars.user_path + '/Downloads/' + pdf_name + ' ('+ str(name_count) +').pdf'
+                condition0 = os.path.isfile(globalvars.folders[i]+ '/' + pdf_name + ' (' + str(name_count) + ').pdf')
+                condition1 = os.path.isfile('C:/Users/' + globalvars.user_path + '/Downloads/' + pdf_name + ' (' + str(name_count) + ').pdf')
+
+                if condition0 or condition1  == True:
+                    name_count += 1
+
+                else:
+                    os.rename('C:/Users/' + globalvars.user_path + '/Downloads/' + str(text_file_inspection_driver.text), 'C:/Users/' + globalvars.user_path + '/Downloads/' + pdf_name + ' (' + str(name_count) + ').pdf')
+                    globalvars.error_message = 'Warning: Duplicate Files Exists in Previous Reports Subfolder'
+                    break
+
             # move the file to the assigned folder
-            shutil.move('C:/Users/' + globalvars.user_path + '/Downloads/' + str(text_file_inspection_driver.text), globalvars.folders[i])
-            # check if downloaded file contains the word Inspection
-            pdf_file = PyPDF2.PdfFileReader(globalvars.folders[i] + "/" + str(text_file_inspection_driver.text))
-            pdf_page1 = pdf_file.getPage(0)
-            pdf_text = pdf_page1.extractText()
+            shutil.move('C:/Users/' + globalvars.user_path + '/Downloads/' + pdf_name + ' (' + str(name_count) + ').pdf', globalvars.folders[i])
 
             # check if the document has more than one page - if it doesn't, delete it
+            pdf_file = PyPDF2.PdfFileReader(globalvars.folders[i] + "/" + pdf_name + ' (' + str(name_count) + ').pdf')
+
             if pdf_file.numPages == 1:
-                os.remove(globalvars.folders[i] + "/" + str(text_file_inspection_driver.text))
+                os.remove(globalvars.folders[i] + "/" + pdf_name + ' ('+ str(name_count) +').pdf')
                 multimedia_return_driver = driver.find_element(By.XPATH, '//*[@id="multimediaManagerForm"]/div[1]/div[1]/nav/ol/li[1]')
                 multimedia_return_driver.click()
                 
@@ -95,7 +113,9 @@ def main(driver):
                 scroll_driver = driver.execute_script("window.scrollTo(0,-document.body.scrollHeight)")
                 multimedia_return_driver = driver.find_element(By.XPATH, '//*[@id="multimediaManagerForm"]/div[1]/div[1]/nav/ol/li[1]')
                 multimedia_return_driver.click()
-                if download_count == 2:
-                    break                    
-                
+                if download_count == 3:
+                    break 
+            # reset name_count variable for the next file
+            name_count = 1
+            # update folder_count variable
             folder_count += 1
