@@ -31,24 +31,28 @@ def main(driver):
             # scroll down
             scroll_driver = driver.execute_script("window.scrollTo(0,document.body.scrollHeight)")
             time.sleep(1)
-            # click on the button to download the file
-            plans_driver = driver.find_element(By.NAME, 'ctl00$ctl00$m_cphContentPane$m_cphInspSubModules$ctl101$btnBridgePlan'+ str(k + 1))
-            plans_driver.click()
-            # scroll down
-            scroll_driver = driver.execute_script("window.scrollTo(0,document.body.scrollHeight)")
-            time.sleep(1)
             # get the file name
-            plans_name_driver = driver.find_element(By.XPATH, '/html/body/form/div[3]/table/tbody/tr/td/table/tbody/tr/td[2]/table/tbody/tr/td/div[1]/div[1]/div/div[1]/table/tbody/tr/td/table/tbody/tr[2]/td/table/tbody/tr[2]/td[1]/div/fieldset/table/tbody/tr[1]/td[1]/div/fieldset/table/tbody/tr['+ str(k + 1) +']/td/table/tbody/tr/td[2]/input')
-            #print('a = ', str(plans_name_driver.get_attribute('value')))
+            plans_name_driver = str(driver.find_element(By.XPATH, '/html/body/form/div[3]/table/tbody/tr/td/table/tbody/tr/td[2]/table/tbody/tr/td/div[1]/div[1]/div/div[1]/table/tbody/tr/td/table/tbody/tr[2]/td/table/tbody/tr[2]/td[1]/div/fieldset/table/tbody/tr[1]/td[2]/div/fieldset/table/tbody/tr/td/div[1]/input['+ str(k + 1) +']').get_attribute('value'))
+            #plans_name_driver = str(plans_name_driver.get_attribute('value'))
+            plans_name_driver = plans_name_driver[14:]
+            print('a = ', plans_name_driver)
 
-            if str(plans_name_driver.get_attribute('value')) == '':
+            if plans_name_driver == '':
                 continue
-                
+
             else:
-                while not os.path.exists('C:/Users/' + globalvars.user_path + '/Downloads/' + str(plans_name_driver.get_attribute('value')) + '.pdf'):
+                # click on the button to download the file
+                plans_driver = driver.find_element(By.NAME, 'ctl00$ctl00$m_cphContentPane$m_cphInspSubModules$ctl101$btnBridgePlan'+ str(k + 1))
+                plans_driver.click()
+                # scroll down
+                scroll_driver = driver.execute_script("window.scrollTo(0,document.body.scrollHeight)")
+                time.sleep(1)
+
+                while not os.path.exists('C:/Users/' + globalvars.user_path + '/Downloads/' + plans_name_driver + '.pdf'):
                     time.sleep(0.5)
-                    
-                shutil.move('C:/Users/' + globalvars.user_path + '/Downloads/' + str(plans_name_driver.get_attribute('value')) + '.pdf', globalvars.folders[i])
+                
+
+                shutil.move('C:/Users/' + globalvars.user_path + '/Downloads/' + plans_name_driver + '.pdf', globalvars.folders[i])
             
         # scroll up 
         scroll_driver = driver.execute_script("window.scrollTo(0,-document.body.scrollHeight)")

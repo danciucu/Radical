@@ -82,7 +82,7 @@ def main(driver):
             # check if the file already exists
             while True:
                 # set up conditions
-                path0 = globalvars.folders[i]+ '/' + pdf_name + ' (' + str(name_count) + ').pdf'
+                path0 = globalvars.folders[i] + '/' + pdf_name + ' (' + str(name_count) + ').pdf'
                 path1 = 'C:/Users/' + globalvars.user_path + '/Downloads/' + pdf_name + ' ('+ str(name_count) +').pdf'
                 condition0 = os.path.isfile(globalvars.folders[i]+ '/' + pdf_name + ' (' + str(name_count) + ').pdf')
                 condition1 = os.path.isfile('C:/Users/' + globalvars.user_path + '/Downloads/' + pdf_name + ' (' + str(name_count) + ').pdf')
