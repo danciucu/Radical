@@ -12,7 +12,7 @@ def main(driver):
     xpath_count = ''
     download_count = 0
     pdf_count = 0
-    name_count = 1
+    name_count = 0
 
     for i in range(len(globalvars.bridgeID)):
         # reset count, download_count, pdf_count
@@ -78,31 +78,36 @@ def main(driver):
             # name of the file without the file type (i.e. ".pdf")
             pdf_name = str(text_file_inspection_driver.text)
             pdf_name = pdf_name[:len(pdf_name) - 4]
+            print(pdf_name)
 
             # check if the file already exists
+            # PROBLEM WITH THE CONDITION AND PDF NAME
             while True:
+                if name_count != 0:
+                    pdf_name = pdf_name + ' (' + str(name_count) + ')'
                 # set up conditions
                 path0 = globalvars.folders[i] + '/' + pdf_name + ' (' + str(name_count) + ').pdf'
                 path1 = 'C:/Users/' + globalvars.user_path + '/Downloads/' + pdf_name + ' ('+ str(name_count) +').pdf'
-                condition0 = os.path.isfile(globalvars.folders[i]+ '/' + pdf_name + ' (' + str(name_count) + ').pdf')
-                condition1 = os.path.isfile('C:/Users/' + globalvars.user_path + '/Downloads/' + pdf_name + ' (' + str(name_count) + ').pdf')
+                condition0 = os.path.isfile(globalvars.folders[i]+ '/' + pdf_name + '.pdf')
+                condition1 = os.path.isfile('C:/Users/' + globalvars.user_path + '/Downloads/' + pdf_name + '.pdf')
 
                 if condition0 or condition1  == True:
                     name_count += 1
 
-                else:
-                    os.rename('C:/Users/' + globalvars.user_path + '/Downloads/' + str(text_file_inspection_driver.text), 'C:/Users/' + globalvars.user_path + '/Downloads/' + pdf_name + ' (' + str(name_count) + ').pdf')
+                else:                    
+                    print('name_count = ', name_count)
+                    os.rename('C:/Users/' + globalvars.user_path + '/Downloads/' + str(text_file_inspection_driver.text), 'C:/Users/' + globalvars.user_path + '/Downloads/' + pdf_name + '.pdf')
                     globalvars.error_message = 'Warning: Duplicate Files Exists in Previous Reports Subfolder'
                     break
 
             # move the file to the assigned folder
-            shutil.move('C:/Users/' + globalvars.user_path + '/Downloads/' + pdf_name + ' (' + str(name_count) + ').pdf', globalvars.folders[i])
+            shutil.move('C:/Users/' + globalvars.user_path + '/Downloads/' + pdf_name + '.pdf', globalvars.folders[i])
 
             # check if the document has more than one page - if it doesn't, delete it
-            pdf_file = PyPDF2.PdfFileReader(globalvars.folders[i] + "/" + pdf_name + ' (' + str(name_count) + ').pdf')
+            pdf_file = PyPDF2.PdfFileReader(globalvars.folders[i] + "/" + pdf_name + '.pdf')
 
             if pdf_file.numPages == 1:
-                os.remove(globalvars.folders[i] + "/" + pdf_name + ' ('+ str(name_count) +').pdf')
+                os.remove(globalvars.folders[i] + "/" + pdf_name + '.pdf')
                 multimedia_return_driver = driver.find_element(By.XPATH, '//*[@id="multimediaManagerForm"]/div[1]/div[1]/nav/ol/li[1]')
                 multimedia_return_driver.click()
                 
@@ -116,6 +121,6 @@ def main(driver):
                 if download_count == 3:
                     break 
             # reset name_count variable for the next file
-            name_count = 1
+            name_count = 0
             # update folder_count variable
             folder_count += 1
