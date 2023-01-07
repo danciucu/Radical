@@ -30,7 +30,6 @@ def main(driver):
             time.sleep(2)
             multimedia_driver = driver.find_element(By.XPATH, '//*[@id="ctl00_m_cphLeftPane_m_ucTaskBar_m_TaskBarMenu_divMenuItems"]/div[3]/div[2]/div/h3[6]')
             multimedia_driver.click()
-
             
         # search bridges IDs by the box from multimedia
         time.sleep(2)
@@ -60,8 +59,9 @@ def main(driver):
             # loop over all files to check if the file is a pdf document
             while True:
                 text_file_inspection_driver = driver.find_element(By.XPATH, '//*[@id="multimediaManagerForm"]/div[2]/div/div[2]/div[1]/table/tbody/tr['+ str(pdf_count + 1) +']/td[1]')
+                pdf_name = str(text_file_inspection_driver.text)
                 # if it's a pdf file, then download the new file
-                if ".pdf" in text_file_inspection_driver.text:
+                if ".pdf" in pdf_name:
                     down_inspection_driver = driver.find_element(By.XPATH, '//*[@id="multimediaManagerForm"]/div[2]/div/div[2]/div[1]/table/tbody/tr['+ str(pdf_count + 1) +']/td[7]/i[3]')
                     down_inspection_driver.click()
                     break
@@ -72,39 +72,34 @@ def main(driver):
                         scroll_driver = driver.execute_script("window.scrollTo(0,document.body.scrollHeight)")
 
             # check if the file downloaded exists
-            while not os.path.exists('C:/Users/' + globalvars.user_path + '/Downloads/' + str(text_file_inspection_driver.text)):
+            while not os.path.exists('C:/Users/' + globalvars.user_path + '/Downloads/' + str(pdf_name)):
                 time.sleep(0.5)
             
             # name of the file without the file type (i.e. ".pdf")
-            pdf_name = str(text_file_inspection_driver.text)
             pdf_name = pdf_name[:len(pdf_name) - 4]
-            print(pdf_name)
+            pdf_rename = pdf_name
 
             # check if the file already exists
-            # PROBLEM WITH THE CONDITION AND PDF NAME
             while True:
-                if name_count != 0:
-                    pdf_name = pdf_name + ' (' + str(name_count) + ')'
-                # set up conditions
-                path0 = globalvars.folders[i] + '/' + pdf_name + ' (' + str(name_count) + ').pdf'
-                path1 = 'C:/Users/' + globalvars.user_path + '/Downloads/' + pdf_name + ' ('+ str(name_count) +').pdf'
-                condition0 = os.path.isfile(globalvars.folders[i]+ '/' + pdf_name + '.pdf')
-                condition1 = os.path.isfile('C:/Users/' + globalvars.user_path + '/Downloads/' + pdf_name + '.pdf')
-
-                if condition0 or condition1  == True:
+                # set up condition
+                condition = os.path.isfile(globalvars.folders[i]+ '/' + pdf_rename + '.pdf')
+                # if the file exists in the Bridge ID foldder, then increase the count
+                if condition == True:
                     name_count += 1
-
+                # if it doesn't, then rename the file
                 else:                    
-                    print('name_count = ', name_count)
-                    os.rename('C:/Users/' + globalvars.user_path + '/Downloads/' + str(text_file_inspection_driver.text), 'C:/Users/' + globalvars.user_path + '/Downloads/' + pdf_name + '.pdf')
+                    os.rename('C:/Users/' + globalvars.user_path + '/Downloads/' + pdf_name + '.pdf', 'C:/Users/' + globalvars.user_path + '/Downloads/' + pdf_rename + '.pdf')
                     globalvars.error_message = 'Warning: Duplicate Files Exists in Previous Reports Subfolder'
                     break
+                # redefine pdf_rename string variable in function of name_count variable
+                pdf_rename = ''
+                pdf_rename = pdf_name + ' (' + str(name_count) + ')'
 
             # move the file to the assigned folder
-            shutil.move('C:/Users/' + globalvars.user_path + '/Downloads/' + pdf_name + '.pdf', globalvars.folders[i])
+            shutil.move('C:/Users/' + globalvars.user_path + '/Downloads/' + pdf_rename + '.pdf', globalvars.folders[i])
 
             # check if the document has more than one page - if it doesn't, delete it
-            pdf_file = PyPDF2.PdfFileReader(globalvars.folders[i] + "/" + pdf_name + '.pdf')
+            pdf_file = PyPDF2.PdfFileReader(globalvars.folders[i] + "/" + pdf_rename + '.pdf')
 
             if pdf_file.numPages == 1:
                 os.remove(globalvars.folders[i] + "/" + pdf_name + '.pdf')
