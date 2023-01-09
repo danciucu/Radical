@@ -33,6 +33,8 @@ def main(driver):
 
         # download files
         for k in range(4):
+            # reset name_count variable for the next file
+            name_count = 0
             # scroll down
             scroll_driver = driver.execute_script("window.scrollTo(0,document.body.scrollHeight)")
             time.sleep(1)
@@ -62,7 +64,7 @@ def main(driver):
                     condition0 = os.path.isfile(globalvars.folders[i]+ '/' + pdf_rename + '.pdf')
                     condition1 = os.path.isfile('C:/Users/' + globalvars.user_path + '/Downloads/' + pdf_rename + '.pdf')
                     # if the file exists in the Downloads or Bridge ID foldder, then increase the count
-                    if condition0 or condition1 == True:
+                    if ((condition0 or condition1 == True) and name_count!= 0) or (condition0 == True and name_count == 0):
                         name_count += 1
                     # if it doesn't, then rename the file
                     else:                    
@@ -75,9 +77,6 @@ def main(driver):
 
                 # move the file to the assigned folder  
                 shutil.move('C:/Users/' + globalvars.user_path + '/Downloads/' + pdf_rename + '.pdf', globalvars.folders[i])
-
-                # reset name_count variable for the next file
-                name_count = 0
             
         # scroll up 
         scroll_driver = driver.execute_script("window.scrollTo(0,-document.body.scrollHeight)")

@@ -87,7 +87,7 @@ def main(driver):
                 condition0 = os.path.isfile(globalvars.folders[i]+ '/' + pdf_rename + '.pdf')
                 condition1 = os.path.isfile('C:/Users/' + globalvars.user_path + '/Downloads/' + pdf_rename + '.pdf')
                 # if the file exists in the Downloads or Bridge ID foldder, then increase the count
-                if condition0 or condition1 == True:
+                if ((condition0 or condition1 == True) and name_count!= 0) or (condition0 == True and name_count == 0):
                     name_count += 1
                 # if it doesn't, then rename the file
                 else:                    
