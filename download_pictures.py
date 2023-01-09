@@ -7,12 +7,14 @@ import os
 import globalvars
 
 def main(driver):
-    # define 3 variables for loops
+    # define 6 variables for loops
     folder_count = 0
     xpath_count = ''
     download_count = 0
     pdf_count = 0
     name_count = 0
+    pdf_name = ''
+    pdf_rename = ''
 
     for i in range(len(globalvars.bridgeID)):
         # reset count, download_count, pdf_count
@@ -84,7 +86,7 @@ def main(driver):
                 # set up conditions
                 condition0 = os.path.isfile(globalvars.folders[i]+ '/' + pdf_rename + '.pdf')
                 condition1 = os.path.isfile('C:/Users/' + globalvars.user_path + '/Downloads/' + pdf_rename + '.pdf')
-                # if the file exists in the Bridge ID foldder, then increase the count
+                # if the file exists in the Downloads or Bridge ID foldder, then increase the count
                 if condition0 or condition1 == True:
                     name_count += 1
                 # if it doesn't, then rename the file
