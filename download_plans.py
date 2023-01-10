@@ -14,7 +14,7 @@ def main(driver):
     time.sleep(5)
     weights_driver = driver.find_element(By.XPATH, '/html/body/form/div[3]/table/tbody/tr/td/table/tbody/tr/td[1]/table/tbody/tr/td/div/div[3]/div[3]/div/h3[4]')
     weights_driver.click()
-    # define 2 variables for the loop:
+    # define 4 variables for the loop:
     pdf_count = 0
     name_count = 0
     pdf_name = ''

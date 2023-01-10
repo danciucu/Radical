@@ -9,9 +9,14 @@ import PyPDF2
 import globalvars
 
 def main(driver):
-    # set two variables for count and date
+    # set 2 variables for count and date
     count = 0
     date =""
+    # define 4 variables for the loop:
+    pdf_count = 0
+    name_count = 0
+    pdf_name = ''
+    pdf_rename = ''
     # set up a variable to control keyboard
     keyboard = Controller()
     # click REPORTS tab
@@ -34,9 +39,10 @@ def main(driver):
     select_key_driver.click()
         
     for i in range(len(globalvars.bridgeID)):
-        # reset count and date
+        # reset count, date and name_count
         count = 0
         date = ""
+        name_count = 0
         # click on selection box
         time.sleep(2)
         # input bridges IDs in the bridge box
@@ -69,7 +75,7 @@ def main(driver):
         # save the file
         time.sleep(2)
         keyboard.press(Key.enter)
-            
+        
         # check if the file was downloaded
         while not os.path.exists('C:/Users/' + globalvars.user_path + '/Downloads/ReportInFrame.pdf'):
             time.sleep(0.5)
@@ -87,10 +93,30 @@ def main(driver):
 
         # change the date format
         date = date[6:] + "-" + date[:2] + "-" + date[3:5]
-        # rename the file
-        os.rename('C:/Users/' + globalvars.user_path + '/Downloads/ReportInFrame.pdf', 'C:/Users/' + globalvars.user_path + '/Downloads/' + str(globalvars.bridgeID[i]) + ' BrM Report_' +  date + '.pdf')
+
+        pdf_name = str(globalvars.bridgeID[i]) + ' BrM Report_' +  date
+        pdf_rename = pdf_name
+
+        # check if the file already exists
+        while True:
+            # set up conditions
+            condition0 = os.path.isfile(globalvars.folders[i]+ '/' + pdf_rename + '.pdf')
+            condition1 = os.path.isfile('C:/Users/' + globalvars.user_path + '/Downloads/' + pdf_rename + '.pdf')
+            # if the file exists in the Downloads or Bridge ID foldder, then increase the count
+            if ((condition0 or condition1 == True) and name_count!= 0) or (condition0 == True and name_count == 0):
+                name_count += 1
+            # if it doesn't, then rename the file
+            # Need to fix the naming problem - the default name is constant and the loop breaks before the renaming part gets through
+            else:                    
+                globalvars.error_message = 'Warning: Duplicate Files Exists in Previous Reports Subfolder'
+                break
+            # redefine pdf_rename string variable in function of name_count variable
+            pdf_rename = ''
+            pdf_rename = pdf_name + ' (' + str(name_count) + ')' 
+
+        os.rename('C:/Users/' + globalvars.user_path + '/Downloads/ReportInFrame.pdf', 'C:/Users/' + globalvars.user_path + '/Downloads/' + pdf_rename + '.pdf')
         # move the file to the required folder
-        shutil.move('C:/Users/' + globalvars.user_path + '/Downloads/' + str(globalvars.bridgeID[i]) + ' BrM Report_' + date + '.pdf', globalvars.folders[i])
+        shutil.move('C:/Users/' + globalvars.user_path + '/Downloads/' + pdf_rename + '.pdf', globalvars.folders[i])
         # refresh the page and go back to the previous page
         driver.refresh()
         time.sleep(5)
